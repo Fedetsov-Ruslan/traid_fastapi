@@ -4,10 +4,11 @@ from fastapi import FastAPI
 from fastapi_users import  FastAPIUsers, fastapi_users
 from pydantic import BaseModel, Field
 from enum import Enum
-from auth.auth import auth_backend
-from auth.database import User, get_user_db
-from auth.manager import get_user_manager
-from auth.schemas import UserCreate, UserRead
+from src.auth.auth import auth_backend
+from src.database import User, get_user_db
+from src.auth.manager import get_user_manager
+from src.auth.schemas import UserCreate, UserRead
+from src.operation.router import router as operation_router
 
 app = FastAPI(
     title='Trading app'
@@ -55,4 +56,5 @@ app.include_router(
     tags=["auth"],
 )
 
+app.include_router(operation_router)
 
