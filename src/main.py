@@ -2,6 +2,11 @@ from datetime import datetime
 from typing import List, Optional
 from fastapi import FastAPI
 from fastapi_users import  FastAPIUsers, fastapi_users
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+from redis import asyncio as aioredis
+
 from pydantic import BaseModel, Field
 from enum import Enum
 from src.auth.auth import auth_backend
@@ -9,6 +14,7 @@ from src.database import User, get_user_db
 from src.auth.manager import get_user_manager
 from src.auth.schemas import UserCreate, UserRead
 from src.operation.router import router as operation_router
+from src.tasks.router import router as tasks_router
 
 app = FastAPI(
     title='Trading app'
@@ -58,3 +64,9 @@ app.include_router(
 
 app.include_router(operation_router)
 
+app.include_router(tasks_router)
+
+@app.on_event("startup")
+async def startup_event():
+    redis = aioredis.from_url('redis://localhost', decode_responses=True, encoding='utf-8')
+    FastAPICache.init(RedisBackend(redis=redis), prefix="fastapi-cache")
