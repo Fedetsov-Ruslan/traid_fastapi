@@ -16,10 +16,16 @@ from src.auth.schemas import UserCreate, UserRead
 from src.operation.router import router as operation_router
 from src.tasks.router import router as tasks_router
 
-app = FastAPI(
-    title='Trading app'
-)
 
+async def lifespan(app: FastAPI):
+    # Код для инициализации при старте приложения
+    redis = aioredis.from_url('redis://localhost', decode_responses=True, encoding='utf-8')
+    FastAPICache.init(RedisBackend(redis=redis), prefix="fastapi-cache")
+
+    yield
+    await redis.close()
+
+app = FastAPI(lifespan=lifespan, title='Trading app')
 
 class DegreeType(Enum):
     newbie = 'newbie'
@@ -66,7 +72,3 @@ app.include_router(operation_router)
 
 app.include_router(tasks_router)
 
-@app.on_event("startup")
-async def startup_event():
-    redis = aioredis.from_url('redis://localhost', decode_responses=True, encoding='utf-8')
-    FastAPICache.init(RedisBackend(redis=redis), prefix="fastapi-cache")

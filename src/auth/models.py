@@ -1,7 +1,8 @@
 from datetime import datetime
 from sqlalchemy import TIMESTAMP, MetaData, Integer, String, ForeignKey, Table, Column, JSON, Boolean
+from src.database import metadata
 
-metadata = MetaData()
+
 
 role = Table(
     "role",

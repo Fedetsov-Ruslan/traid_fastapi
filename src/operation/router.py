@@ -1,4 +1,5 @@
 import time
+import logging
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import select, insert

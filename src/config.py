@@ -2,6 +2,11 @@ import os
 
 from dotenv import load_dotenv
 
+env_vars_to_clear = ['DB_NAME', 'DB_USER', 'DB_PASS', 'DB_HOST', 'DB_PORT', 'SECRET_AUTH', 'SMTP_USER', 'SMTP_PASSWORD', 'SMTP_HOST', 'SMTP_PORT', 'MODE']
+
+for var in env_vars_to_clear:
+    os.environ.pop(var, None)
+
 load_dotenv()
 
 DB_HOST = os.environ.get("DB_HOST")
@@ -14,3 +19,4 @@ SMTP_USER = os.environ.get("SMTP_USER")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
 SMTP_HOST = os.environ.get("SMTP_HOST")
 SMTP_PORT = os.environ.get("SMTP_PORT")
+MODE = os.environ.get("MODE")
