@@ -6,6 +6,8 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
 from redis import asyncio as aioredis
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from pydantic import BaseModel, Field
 from enum import Enum
@@ -15,6 +17,7 @@ from src.auth.manager import get_user_manager
 from src.auth.schemas import UserCreate, UserRead
 from src.operation.router import router as operation_router
 from src.tasks.router import router as tasks_router
+from src.pages.router import router as pages_router
 
 
 async def lifespan(app: FastAPI):
@@ -26,6 +29,7 @@ async def lifespan(app: FastAPI):
     await redis.close()
 
 app = FastAPI(lifespan=lifespan, title='Trading app')
+app.mount('/static', StaticFiles(directory='src/static'), name='static')
 
 class DegreeType(Enum):
     newbie = 'newbie'
@@ -69,6 +73,20 @@ app.include_router(
 )
 
 app.include_router(operation_router)
-
 app.include_router(tasks_router)
+app.include_router(pages_router)
+
+origins = [
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Set-Cookie", "Authorization", "Ascess-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"],
+)
+
+
 
