@@ -18,6 +18,7 @@ from src.auth.schemas import UserCreate, UserRead
 from src.operation.router import router as operation_router
 from src.tasks.router import router as tasks_router
 from src.pages.router import router as pages_router
+from src.chat.router import router as chat_router
 
 
 async def lifespan(app: FastAPI):
@@ -75,17 +76,19 @@ app.include_router(
 app.include_router(operation_router)
 app.include_router(tasks_router)
 app.include_router(pages_router)
+app.include_router(chat_router)
 
 origins = [
     "http://localhost:8000",
+    "http://127.0.0.1:8000"
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Set-Cookie", "Authorization", "Ascess-Control-Allow-Origin", "Access-Control-Allow-Headers", "Access-Control-Allow-Methods"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
